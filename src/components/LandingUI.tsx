@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+// 1. Added 'Variants' to the import list
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { MessageSquare, Zap, Edit, Heart, ChevronRight, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 
@@ -38,7 +39,6 @@ const FloatingNavbar = ({ user }: { user: UserProps }) => {
   
   return (
     <motion.nav
-      // It will slide down once when the page loads, and stay there!
       initial={{ y: -150, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
@@ -67,7 +67,6 @@ const FloatingNavbar = ({ user }: { user: UserProps }) => {
           {/* DYNAMIC AUTH SECTION */}
           {user ? (
             <div className="flex items-center gap-4 pl-4 border-l border-white/20">
-              {/* Profile Image linking to their dynamic profile route */}
               <Link href={`/user/${user.id}`}>
                 {user.image ? (
                   <img 
@@ -104,7 +103,6 @@ const FloatingNavbar = ({ user }: { user: UserProps }) => {
           )}
         </div>
 
-        {/* Mobile Menu Toggle */}
         <div className="md:hidden">
           <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -112,7 +110,6 @@ const FloatingNavbar = ({ user }: { user: UserProps }) => {
         </div>
       </div>
       
-      {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div 
@@ -147,11 +144,14 @@ const FloatingNavbar = ({ user }: { user: UserProps }) => {
 // 2. Hero Section
 // ---------------------------------
 const HeroSection = ({ user }: { user: UserProps }) => {
-  const containerVariants = {
+  // 2. Added : Variants here
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
   };
-  const itemVariants = {
+  
+  // 3. Added : Variants here
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
   };
@@ -198,7 +198,6 @@ const HeroSection = ({ user }: { user: UserProps }) => {
   );
 };
 
-// ... FeaturesGrid, FuturisticSVG, and Footer remain exactly the same as your previous code!
 
 // Features Grid
 const FeaturesGrid = () => {
@@ -220,8 +219,14 @@ const FeaturesGrid = () => {
     },
   ];
   
-  const containerVariants = { hidden: {}, visible: { transition: { staggerChildren: 0.3 } } };
-  const cardVariants = {
+  // 4. Added : Variants here
+  const containerVariants: Variants = { 
+    hidden: {}, 
+    visible: { transition: { staggerChildren: 0.3 } } 
+  };
+  
+  // 5. Added : Variants here
+  const cardVariants: Variants = {
     hidden: { opacity: 0, y: 50, scale: 0.9 },
     visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } }
   };
