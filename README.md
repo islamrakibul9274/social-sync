@@ -1,6 +1,6 @@
 # ⚡ SocialSync
 
-> **Connect in the Future. Today.** > A next-generation, full-stack social networking platform built with Next.js App Router, featuring real-time optimistic UI updates, glassmorphism design, and secure server-side interactions.
+> **Connect in the Future. Today.** ### 🌐 [Live Demo: View SocialSync](https://social-sync-skic-ivbjsigly-rumel9274-6063s-projects.vercel.app/)
 
 ![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
