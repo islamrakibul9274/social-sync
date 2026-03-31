@@ -1,19 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Mail, Lock, Zap } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SigninPage() {
+// 1. Rename your original component to SigninForm
+function SigninForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  
+  // This is the hook that Next.js requires to be in a Suspense boundary
   const searchParams = useSearchParams();
-
   const callbackUrl = searchParams.get("callbackUrl") || "/feed";
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,5 +124,14 @@ export default function SigninPage() {
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+// 2. Wrap it in a Suspense boundary for the default export
+export default function SigninPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black text-indigo-500 animate-pulse">Loading...</div>}>
+      <SigninForm />
+    </Suspense>
   );
 }
