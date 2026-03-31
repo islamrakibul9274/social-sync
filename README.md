@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡ SocialSync
 
-## Getting Started
+> **Connect in the Future. Today.** > A next-generation, full-stack social networking platform built with Next.js App Router, featuring real-time optimistic UI updates, glassmorphism design, and secure server-side interactions.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-black?style=for-the-badge&logo=framer&logoColor=blue)
+
+## ✨ Core Features
+
+* **🏎️ Optimistic UI:** Instantaneous feed updates using React's `useOptimistic` hook—zero latency feeling for the user.
+* **🔒 Secure Server Actions:** Direct-to-server data mutations and secure API key handling (no client-side exposure).
+* **📸 Server-Side Image Uploads:** Seamless profile picture uploads routed securely through the Next.js server to the ImgBB API.
+* **💅 Cyber-Mesh Glassmorphism:** A highly responsive, animated UI powered by Tailwind CSS and Framer Motion.
+* **🛡️ Type-Safe Architecture:** End-to-end type safety from the Prisma database schema to the frontend React components.
+* **🔑 Custom Authentication:** Secure credentials login system powered by NextAuth.js.
+* **⚡ Full CRUD Functionality:** Create, read, update, and delete posts, comments, and profile data.
+
+## 🛠️ Tech Stack
+
+* **Framework:** [Next.js](https://nextjs.org/) (App Router, Server Actions)
+* **Language:** [TypeScript](https://www.typescriptlang.org/)
+* **Database:** [MongoDB](https://www.mongodb.com/)
+* **ORM:** [Prisma](https://www.prisma.io/)
+* **Authentication:** [NextAuth.js](https://next-auth.js.org/)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+* **Animations:** [Framer Motion](https://www.framer.com/motion/)
+* **Image Hosting:** [ImgBB API](https://api.imgbb.com/)
+
+## 🚀 Getting Started
+
+### Prerequisites
+Make sure you have Node.js and npm installed on your machine.
+
+### 1. Clone the repository
+```bash
+git clone [https://github.com/YOUR_USERNAME/social-sync.git](https://github.com/YOUR_USERNAME/social-sync.git)
+cd social-sync
+```
+
+
+
+### 2\. Install dependencies
+
+```bash
+npm install
+```
+
+### 3\. Setup Environment Variables
+
+Create a `.env` file in the root of your project and add the following credentials:
+
+```env
+# MongoDB Connection String
+DATABASE_URL="mongodb+srv://<username>:<password>@<cluster>.mongodb.net/socialsync"
+
+# NextAuth Secret (Generate one using: openssl rand -base64 32)
+AUTH_SECRET="your_generated_secret_here"
+
+# NextAuth URL (for local development)
+NEXTAUTH_URL="http://localhost:3000"
+
+# ImgBB API Key for Image Uploads
+IMGBB_API_KEY="your_imgbb_api_key_here"
+```
+
+### 4\. Initialize Prisma
+
+Generate the Prisma client to sync with your database:
+
+```bash
+npx prisma generate
+```
+
+### 5\. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📦 Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project is heavily optimized for deployment on [Vercel](https://vercel.com/).
 
-## Learn More
+Ensure you configure the `Build Command` in Vercel to:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+prisma generate && next build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+And don't forget to add your Environment Variables in the Vercel dashboard (without quotation marks).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 License
 
-## Deploy on Vercel
+This project is open-source and available under the [MIT License](https://www.google.com/search?q=LICENSE).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
