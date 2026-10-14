@@ -3,6 +3,9 @@
 > **The Real-Time Social Layer for Modern Engineers & Creators.**
 > Built with Next.js 16 Turbopack, React 19, MongoDB, and Prisma ORM. Engineered with 1px precision tactile brutalism and zero-gradient minimalism.
 
+### 🌐 Live Production Deployment: [https://social-sync-sigma.vercel.app](https://social-sync-sigma.vercel.app)
+
+[![Live Deploy](https://img.shields.io/badge/Deploy-Vercel_Production-black?style=for-the-badge&logo=vercel&logoColor=white)](https://social-sync-sigma.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js_16-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
