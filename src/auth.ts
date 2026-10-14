@@ -37,14 +37,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           email: user.email,
           name: user.name,
+          image: user.image,
         };
       },
     }),
   ],
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+        token.picture = (user as any).image;
+      }
+      return token;
+    },
     async session({ session, token }) {
       if (token.sub && session.user) {
-        session.user.id = token.sub; // This maps the MongoDB ID to the session
+        session.user.id = token.sub;
+        if (token.picture && !session.user.image) {
+          session.user.image = token.picture as string;
+        }
       }
       return session;
     },

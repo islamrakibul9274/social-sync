@@ -1,20 +1,18 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { motion } from "framer-motion";
-import { Mail, Lock, Zap } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
-// 1. Rename your original component to SigninForm
 function SigninForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  
-  // This is the hook that Next.js requires to be in a Suspense boundary
+
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/feed";
 
@@ -41,96 +39,98 @@ function SigninForm() {
       setIsLoading(false);
     }
   };
-  
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
-  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black cyber-mesh-background p-4">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="w-full max-w-md"
-      >
-        <motion.div
-          variants={itemVariants}
-          className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-2xl"
-        >
-          <div className="text-center mb-8">
-             <motion.div
-              className="inline-block mb-4"
-              animate={{ scale: [1, 1.1, 1, 1.1, 1]}}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+    <div className="min-h-screen flex items-center justify-center bg-[#050507] p-4 relative selection:bg-white/20">
+      <div className="fixed inset-0 tech-grid opacity-30 pointer-events-none z-0" />
+
+      <div className="w-full max-w-sm relative z-10">
+        <div className="linear-panel rounded-xl p-6 sm:p-7 shadow-2xl border border-zinc-800 space-y-5">
+          <div className="space-y-1.5">
+            <Link
+              href="/"
+              className="inline-flex w-7 h-7 rounded-md bg-white items-center justify-center text-black font-bold text-xs mb-1"
             >
-              <Zap className="text-indigo-400" size={48} />
-            </motion.div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">Welcome Back</h1>
-            <p className="text-gray-400 mt-2">Sign in to sync with your universe.</p>
+              S
+            </Link>
+            <h1 className="text-xl font-bold text-white tracking-tight">
+              Sign In to SocialSync
+            </h1>
+            <p className="text-xs text-zinc-400">
+              Enter your credentials to access the pulse stream.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <motion.div variants={itemVariants} className="relative">
-              <Mail className="absolute top-1/2 left-4 -translate-y-1/2 text-gray-400" />
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            <div className="relative">
+              <Mail
+                size={14}
+                className="absolute top-1/2 left-3 -translate-y-1/2 text-zinc-500"
+              />
               <input
                 type="email"
                 placeholder="Email Address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-white/5 border border-white/20 rounded-lg py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full linear-input rounded-md py-2 pl-9 pr-3 text-xs text-white placeholder:text-zinc-500 outline-none"
               />
-            </motion.div>
-            <motion.div variants={itemVariants} className="relative">
-              <Lock className="absolute top-1/2 left-4 -translate-y-1/2 text-gray-400" />
+            </div>
+
+            <div className="relative">
+              <Lock
+                size={14}
+                className="absolute top-1/2 left-3 -translate-y-1/2 text-zinc-500"
+              />
               <input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full bg-white/5 border border-white/20 rounded-lg py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="w-full linear-input rounded-md py-2 pl-9 pr-3 text-xs text-white placeholder:text-zinc-500 outline-none"
               />
-            </motion.div>
-            
+            </div>
+
             {error && (
-              <p className="text-sm text-rose-400 text-center">{error}</p>
+              <p className="text-xs text-rose-400 font-mono">
+                {error}
+              </p>
             )}
 
-            <motion.div variants={itemVariants}>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed transition-all duration-300 shadow-lg glowing-cta-button"
-              >
-                {isLoading ? "Signing In..." : "Sign In"}
-              </button>
-            </motion.div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-2 rounded-md bg-white hover:bg-zinc-200 text-black font-semibold text-xs transition-colors disabled:opacity-40"
+            >
+              {isLoading ? "Authenticating..." : "Sign In &rarr;"}
+            </button>
           </form>
 
-          <motion.p variants={itemVariants} className="text-center text-sm text-gray-400 mt-8">
-            Don't have an account?{" "}
-            <a href="/auth/signup" className="font-medium text-indigo-400 hover:text-indigo-300">
-              Sign Up
-            </a>
-          </motion.p>
-        </motion.div>
-      </motion.div>
+          <p className="text-xs text-zinc-500 text-center font-mono">
+            New node?{" "}
+            <Link
+              href="/auth/signup"
+              className="text-white hover:underline font-semibold"
+            >
+              Create Account
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
 
-// 2. Wrap it in a Suspense boundary for the default export
 export default function SigninPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-black text-indigo-500 animate-pulse">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#050507] text-zinc-400 text-xs font-mono">
+          Loading...
+        </div>
+      }
+    >
       <SigninForm />
     </Suspense>
   );

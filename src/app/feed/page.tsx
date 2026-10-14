@@ -1,115 +1,130 @@
 import Link from "next/link";
-import Image from "next/image"; // Added for optimization
 import { auth } from "@/auth";
-import { getPosts } from "@/lib/data";
+import { getPosts, getExploreUsers } from "@/lib/data";
+import AppShell from "@/components/AppShell";
 import PostForm from "@/components/PostForm";
-import SignOutButton from "@/components/SignOutButton";
-import ReactionButtons from "@/components/ReactionButtons";
-import CommentSection from "@/components/CommentSection";
-import { formatDistanceToNow } from "date-fns";
+import PostCard from "@/components/PostCard";
+import { Compass, Users, Sparkles, X } from "lucide-react";
 
-export default async function FeedPage() {
+export default async function FeedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    feedType?: "all" | "following";
+    tag?: string;
+    search?: string;
+  }>;
+}) {
   const session = await auth();
-  const posts = await getPosts();
+  const resolvedSearchParams = await searchParams;
+  const currentUserId = session?.user?.id;
+
+  const feedType = resolvedSearchParams.feedType || "all";
+  const activeTag = resolvedSearchParams.tag;
+  const activeSearch = resolvedSearchParams.search;
+
+  const [posts, exploreUsers] = await Promise.all([
+    getPosts({
+      feedType,
+      tag: activeTag,
+      search: activeSearch,
+      currentUserId,
+    }),
+    getExploreUsers(currentUserId),
+  ]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 selection:bg-blue-500/30">
-      <div className="max-w-2xl mx-auto space-y-8">
-
-        {/* Header with Glassmorphism */}
-        <div className="flex justify-between items-center p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-2xl sticky top-4 z-50 shadow-2xl shadow-black/50">
-
-          <Link href="/">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent tracking-tight hover:opacity-80 transition-opacity cursor-pointer">
-              SocialSync Feed
-            </h1>
-          </Link>
-
-          <div className="flex items-center gap-4">
-            <Link href={`/user/${session?.user?.id}`} className="flex items-center gap-3 group">
-              <span className="text-sm text-gray-400 hidden sm:inline font-medium group-hover:text-white transition-colors">
-                {session?.user?.name}
-              </span>
-
-              {session?.user?.image ? (
-                <Image
-                  src={session.user.image}
-                  alt="Profile"
-                  width={36}
-                  height={36}
-                  className="w-9 h-9 rounded-full object-cover border border-white/20 group-hover:border-blue-400 transition-colors shadow-lg"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-sm font-bold shadow-lg border border-white/10">
-                  {session?.user?.name?.charAt(0) || "U"}
-                </div>
-              )}
+    <AppShell user={session?.user as any} exploreUsers={exploreUsers}>
+      <div className="space-y-4">
+        {/* ========================================================= */}
+        {/* FEED FILTER TABS & SEARCH BANNER */}
+        {/* ========================================================= */}
+        <div className="linear-card p-1.5 rounded-lg flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <Link
+              href="/feed"
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                feedType === "all" && !activeTag && !activeSearch
+                  ? "bg-zinc-800 text-white font-semibold"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <Compass size={13} />
+              <span>For You</span>
             </Link>
 
-            <SignOutButton />
+            {currentUserId && (
+              <Link
+                href="/feed?feedType=following"
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  feedType === "following"
+                    ? "bg-zinc-800 text-white font-semibold"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                <Users size={13} />
+                <span>Following</span>
+              </Link>
+            )}
           </div>
-        </div>
 
-        {/* --- FIXED LINE: Passing the user prop --- */}
-        <div className="p-6 bg-white/5 border border-white/10 rounded-3xl backdrop-blur-md shadow-xl">
-          <PostForm user={session?.user} />
-        </div>
-
-        {/* The Actual Feed */}
-        <div className="space-y-6">
-          {posts.map((post) => (
-            <div
-              key={post.id}
-              className="group p-6 bg-white/[0.03] border border-white/5 rounded-3xl hover:border-white/20 transition-all duration-300 hover:bg-white/[0.05] shadow-lg"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center gap-3">
-                  <Link href={`/user/${post.authorId}`} className="w-10 h-10 rounded-full flex-shrink-0 shadow-lg shadow-blue-500/20 hover:scale-105 transition-transform relative">
-                    {post.author?.image ? (
-                      <Image 
-                        src={post.author.image} 
-                        alt={post.author.name || "User"} 
-                        fill
-                        className="rounded-full object-cover border border-white/10" 
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-sm font-bold border border-white/10">
-                        {post.author?.name?.charAt(0) || "U"}
-                      </div>
-                    )}
-                  </Link>
-                  
-                  <div>
-                    <Link href={`/user/${post.authorId}`}>
-                      <p className="font-semibold text-sm hover:text-blue-400 transition-colors cursor-pointer">
-                        {post.author?.name}
-                      </p>
-                    </Link>
-                    <p className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">
-                      {formatDistanceToNow(new Date(post.createdAt))} ago
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-gray-200 leading-relaxed mb-4 whitespace-pre-wrap">
-                {post.content}
-              </p>
-
-              <div className="pt-4 border-t border-white/5">
-                <ReactionButtons postId={post.id} reactions={post.reactions || []} />
-                <CommentSection postId={post.id} comments={post.comments || []} />
-              </div>
+          {/* Active Tag or Search Pill */}
+          {(activeTag || activeSearch) && (
+            <div className="flex items-center gap-1.5 pr-1.5">
+              <span className="text-[11px] font-mono text-zinc-300 px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 flex items-center gap-1.5">
+                {activeTag ? `#${activeTag}` : `"${activeSearch}"`}
+                <Link href="/feed" className="hover:text-white">
+                  <X size={11} />
+                </Link>
+              </span>
             </div>
+          )}
+        </div>
+
+        {/* ========================================================= */}
+        {/* POST COMPOSER */}
+        {/* ========================================================= */}
+        {currentUserId && (
+          <PostForm user={session?.user} />
+        )}
+
+        {/* ========================================================= */}
+        {/* PULSE STREAM */}
+        {/* ========================================================= */}
+        <div className="space-y-3">
+          {posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post as any}
+              currentUserId={currentUserId}
+            />
           ))}
 
           {posts.length === 0 && (
-            <div className="text-center p-20 bg-white/5 rounded-3xl border border-dashed border-white/10 animate-pulse">
-              <p className="text-gray-500 italic">The silence is deafening. Say something!</p>
+            <div className="linear-panel p-12 text-center rounded-xl space-y-2">
+              <div className="w-8 h-8 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 mx-auto">
+                <Sparkles size={16} />
+              </div>
+              <h3 className="text-xs font-semibold text-white">Stream Idle</h3>
+              <p className="text-[11px] text-zinc-500 max-w-sm mx-auto">
+                {activeTag
+                  ? `No pulses found tagged with #${activeTag}.`
+                  : activeSearch
+                  ? `No results found for "${activeSearch}".`
+                  : "No pulses in this stream yet. Broadcast your thoughts above!"}
+              </p>
+              {(activeTag || activeSearch || feedType === "following") && (
+                <Link
+                  href="/feed"
+                  className="inline-block pt-1 text-xs font-semibold text-white hover:underline font-mono"
+                >
+                  Clear Filters &rarr;
+                </Link>
+              )}
             </div>
           )}
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

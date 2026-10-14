@@ -1,29 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import { Edit3, X } from "lucide-react";
 import { updateUserProfile, uploadImageToImgBB } from "@/lib/actions";
 
 export default function EditProfile({
-  user
+  user,
 }: {
-  user: { name?: string | null; bio?: string | null; image?: string | null }
+  user: {
+    name?: string | null;
+    bio?: string | null;
+    image?: string | null;
+    headline?: string | null;
+    github?: string | null;
+    twitter?: string | null;
+    website?: string | null;
+  };
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [imgUrl, setImgUrl] = useState(user.image || "");
 
-  // 1. The ImgBB Uploader Function (Now 100% Secure)
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
     const formData = new FormData();
-    formData.append("image", file); // Append the raw file
+    formData.append("image", file);
 
     try {
-      // 🔒 SECURE: We now call the Server Action instead of exposing the API key!
       const secureUrl = await uploadImageToImgBB(formData);
       setImgUrl(secureUrl);
     } catch (error) {
@@ -37,86 +45,159 @@ export default function EditProfile({
     return (
       <button
         onClick={() => setIsEditing(true)}
-        className="mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-sm font-medium transition-all backdrop-blur-md border border-white/10"
+        className="py-1.5 px-3 rounded-md text-xs font-semibold bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors flex items-center gap-1.5 font-mono"
       >
-        Edit Profile
+        <Edit3 size={13} />
+        <span>Edit Profile</span>
       </button>
     );
   }
 
-  // 2. The Form UI
   return (
-    <div className="mt-6 p-6 bg-black/40 border border-white/10 rounded-2xl backdrop-blur-xl">
-      <form action={async (formData) => {
-        // Append our ImgBB URL to the form data before sending to our Server Action
-        formData.append("image", imgUrl);
-        await updateUserProfile(formData);
-        setIsEditing(false); // Close the form when done
-      }} className="space-y-4">
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+      <div className="linear-panel w-full max-w-md rounded-xl p-5 space-y-4 border border-zinc-800">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+            Edit Profile
+          </h3>
+          <button
+            onClick={() => setIsEditing(false)}
+            className="text-zinc-400 hover:text-white"
+          >
+            <X size={16} />
+          </button>
+        </div>
 
-        {/* Avatar Upload */}
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Profile Picture</label>
-          <div className="flex items-center gap-4">
-            {imgUrl && (
-              <Image 
-                src={imgUrl} 
-                alt="Preview" 
-                width={48} 
-                height={48} 
-                className="w-12 h-12 rounded-full object-cover border border-white/20" 
+        <form
+          action={async (formData) => {
+            setIsSaving(true);
+            if (imgUrl) formData.append("image", imgUrl);
+            await updateUserProfile(formData);
+            setIsSaving(false);
+            setIsEditing(false);
+          }}
+          className="space-y-3.5"
+        >
+          {/* Avatar Upload */}
+          <div className="space-y-1">
+            <label className="block text-[11px] font-mono text-zinc-400">
+              Avatar
+            </label>
+            <div className="flex items-center gap-3">
+              {imgUrl ? (
+                <Image
+                  src={imgUrl}
+                  alt="Preview"
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-md object-cover border border-zinc-700"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-md bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-300 font-mono">
+                  {user.name?.charAt(0) || "U"}
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="text-xs text-zinc-400 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-zinc-800 file:text-zinc-300 hover:file:bg-zinc-700 cursor-pointer"
               />
-            )}
+              {isUploading && (
+                <span className="text-[10px] text-zinc-400 font-mono animate-pulse">
+                  Uploading...
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Name */}
+          <div className="space-y-1">
+            <label className="block text-[11px] font-mono text-zinc-400">
+              Display Name
+            </label>
             <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 transition-all cursor-pointer"
+              type="text"
+              name="name"
+              defaultValue={user.name || ""}
+              className="w-full linear-input rounded-md px-3 py-1.5 text-xs text-white outline-none"
             />
           </div>
-          {isUploading && <p className="text-xs text-blue-400 mt-1 animate-pulse">Uploading to ImgBB...</p>}
-        </div>
 
-        {/* Name Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Display Name</label>
-          <input
-            type="text"
-            name="name"
-            defaultValue={user.name || ""}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-blue-500 outline-none"
-          />
-        </div>
+          {/* Headline */}
+          <div className="space-y-1">
+            <label className="block text-[11px] font-mono text-zinc-400">
+              Headline
+            </label>
+            <input
+              type="text"
+              name="headline"
+              placeholder="e.g. Next.js Architect & AI Builder"
+              defaultValue={user.headline || ""}
+              className="w-full linear-input rounded-md px-3 py-1.5 text-xs text-white outline-none"
+            />
+          </div>
 
-        {/* Bio Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-400 mb-1">Bio</label>
-          <textarea
-            name="bio"
-            defaultValue={user.bio || ""}
-            rows={3}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:ring-1 focus:ring-blue-500 outline-none resize-none"
-          />
-        </div>
+          {/* Bio */}
+          <div className="space-y-1">
+            <label className="block text-[11px] font-mono text-zinc-400">
+              Bio
+            </label>
+            <textarea
+              name="bio"
+              rows={2}
+              defaultValue={user.bio || ""}
+              className="w-full linear-input rounded-md px-3 py-1.5 text-xs text-white outline-none resize-none"
+            />
+          </div>
 
-        {/* Controls */}
-        <div className="flex justify-end gap-3 pt-2">
-          <button
-            type="button"
-            onClick={() => setIsEditing(false)}
-            className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isUploading}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-500/20"
-          >
-            {isUploading ? "Please wait..." : "Save Changes"}
-          </button>
-        </div>
-      </form>
+          {/* Socials */}
+          <div className="grid grid-cols-2 gap-2.5">
+            <div className="space-y-1">
+              <label className="block text-[11px] font-mono text-zinc-400">
+                GitHub
+              </label>
+              <input
+                type="text"
+                name="github"
+                placeholder="username"
+                defaultValue={user.github || ""}
+                className="w-full linear-input rounded-md px-2.5 py-1.5 text-xs text-white outline-none"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="block text-[11px] font-mono text-zinc-400">
+                Twitter / X
+              </label>
+              <input
+                type="text"
+                name="twitter"
+                placeholder="handle"
+                defaultValue={user.twitter || ""}
+                className="w-full linear-input rounded-md px-2.5 py-1.5 text-xs text-white outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className="px-3 py-1.5 rounded text-xs text-zinc-400 hover:text-white"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isSaving || isUploading}
+              className="px-4 py-1.5 rounded text-xs font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50 transition-colors"
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

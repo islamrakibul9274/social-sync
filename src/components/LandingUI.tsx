@@ -1,12 +1,26 @@
 "use client";
 
-import React, { useState } from 'react';
-// 1. Added 'Variants' to the import list
-import { motion, AnimatePresence, Variants } from 'framer-motion';
-import { MessageSquare, Zap, Edit, Heart, ChevronRight, Menu, X } from 'lucide-react';
-import Link from 'next/link';
+import React, { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+  MessageSquare,
+  Terminal,
+  Activity,
+  Shield,
+  Layers,
+  Search,
+  ExternalLink,
+  ChevronRight,
+  Heart,
+  Flame,
+  Zap,
+  Check,
+  Copy,
+  ArrowUpRight,
+  Code2,
+} from "lucide-react";
 
-// Define the shape of our User object
 type UserProps = {
   id?: string | null;
   name?: string | null;
@@ -16,315 +30,661 @@ type UserProps = {
 
 export default function LandingUI({ user }: { user: UserProps }) {
   return (
-    <div className="min-h-screen bg-black text-gray-100 font-sans overflow-x-hidden">
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-80 z-0 cyber-mesh-background" />
-      <div className="relative z-10">
-        <FloatingNavbar user={user} />
-        <main className="px-4 md:px-8">
-          <HeroSection user={user} />
-          <FeaturesGrid />
-        </main>
-        <Footer />
-      </div>
+    <div className="min-h-screen bg-[#050507] text-[#f4f4f5] selection:bg-white/20 selection:text-white">
+      {/* 1px Engineered Grid Background */}
+      <div className="fixed inset-0 tech-grid pointer-events-none opacity-40 z-0" />
+
+      {/* Full-Width Precision Navbar */}
+      <EngineeredNavbar user={user} />
+
+      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 space-y-28">
+        <HeroSection user={user} />
+        <InteractiveSystemTerminal user={user} />
+        <BentoGridTechnical />
+        <ComparisonMatrix />
+        <ActionBanner user={user} />
+      </main>
+
+      <EngineeredFooter />
     </div>
   );
 }
 
-// ---------------------------------
-// 1. Permanently Visible Navbar
-// ---------------------------------
-const FloatingNavbar = ({ user }: { user: UserProps }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navItems = ["Features", "Pricing", "About", "Contact"];
-  
+// =============================================================================
+// 1. Engineered Full-Width Navbar
+// =============================================================================
+function EngineeredNavbar({ user }: { user: UserProps }) {
   return (
-    <motion.nav
-      initial={{ y: -150, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="fixed top-4 left-1/2 -translate-x-1/2 w-[95vw] md:w-full max-w-5xl bg-black/60 backdrop-blur-xl border border-white/20 rounded-full shadow-lg z-50"
-    >
-      <div className="flex items-center justify-between px-8 py-3">
-        {/* Left Section: Logo */}
-        <div className="flex items-center gap-3">
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}>
-            <Zap className="text-indigo-400" size={24} />
-          </motion.div>
-          <span className="text-xl font-bold text-white tracking-tight">Social-Sync</span>
-        </div>
-        
-        {/* Right Section: Navigation and CTA */}
-        <div className="hidden md:flex items-center gap-8">
-          <div className="flex items-center gap-8">
-            {navItems.map((item) => (
-              <a key={item} href="#" className="text-sm font-medium text-gray-400 hover:text-white transition-colors duration-300 relative group">
-                {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-            ))}
+    <header className="sticky top-0 z-50 w-full border-b border-zinc-800/80 bg-[#050507]/90 backdrop-blur-md">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+        {/* Left: Brand & Version */}
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2.5">
+            {/* Minimalist Monochrome Logo Mark */}
+            <div className="w-6 h-6 rounded-md bg-white flex items-center justify-center text-black font-black text-xs">
+              S
+            </div>
+            <span className="font-semibold text-sm tracking-tight text-white">
+              SocialSync
+            </span>
+          </Link>
+
+          <div className="hidden sm:flex items-center gap-2">
+            <span className="font-mono text-[10px] text-zinc-400 border border-zinc-800 bg-zinc-900/60 px-1.5 py-0.5 rounded">
+              v2.6.0
+            </span>
+            <span className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-400 pl-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              Operational
+            </span>
           </div>
-          
-          {/* DYNAMIC AUTH SECTION */}
+        </div>
+
+        {/* Center: Segmented Navigation */}
+        <nav className="hidden md:flex items-center gap-6 text-xs text-zinc-400">
+          <a
+            href="#features"
+            className="hover:text-white transition-colors"
+          >
+            Capabilities
+          </a>
+          <a
+            href="#terminal"
+            className="hover:text-white transition-colors"
+          >
+            Live Simulator
+          </a>
+          <a
+            href="#matrix"
+            className="hover:text-white transition-colors"
+          >
+            Specification
+          </a>
+          <Link
+            href="/feed"
+            className="hover:text-white transition-colors"
+          >
+            Stream
+          </Link>
+        </nav>
+
+        {/* Right: Search & Actions */}
+        <div className="flex items-center gap-3">
+          <a
+            href="https://github.com/islamrakibul9274/social-sync"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono text-zinc-400 border border-zinc-800 hover:border-zinc-700 hover:text-white transition-colors"
+          >
+            <Code2 size={13} />
+            <span>GitHub</span>
+          </a>
+
           {user ? (
-            <div className="flex items-center gap-4 pl-4 border-l border-white/20">
-              <Link href={`/user/${user.id}`}>
-                {user.image ? (
-                  <img 
-                    src={user.image} 
-                    alt={user.name || "Profile"} 
-                    className="w-10 h-10 rounded-full object-cover border-2 border-indigo-500/50 hover:scale-105 hover:border-indigo-400 transition-all shadow-lg shadow-indigo-500/20"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white border-2 border-indigo-500/50 hover:scale-105 transition-transform shadow-lg shadow-indigo-500/20">
-                    {user.name?.charAt(0) || "U"}
-                  </div>
-                )}
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="hidden sm:inline-block text-xs text-zinc-400 hover:text-white"
+              >
+                Dashboard
               </Link>
-              <Link href="/feed">
-                <motion.button
-                  whileHover={{ scale: 1.05, backgroundColor: "rgba(99, 102, 241, 1)" }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-indigo-500/20 border border-indigo-500/50 text-white text-sm font-bold py-2 px-5 rounded-full hover:bg-indigo-500 transition-all duration-300"
-                >
-                  Feed &rarr;
-                </motion.button>
+              <Link
+                href="/feed"
+                className="flex items-center gap-2 py-1.5 px-3.5 rounded-md text-xs font-medium bg-white text-black hover:bg-zinc-200 transition-colors"
+              >
+                {user.image && (
+                  <Image
+                    src={user.image}
+                    alt={user.name || "User"}
+                    width={18}
+                    height={18}
+                    className="w-4 h-4 rounded-full object-cover"
+                  />
+                )}
+                <span>Launch App &rarr;</span>
               </Link>
             </div>
           ) : (
-            <Link href="/auth/signin">
-              <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-white/5 border border-white/20 text-white text-sm font-bold py-2 px-6 rounded-full transition-all duration-300"
+            <div className="flex items-center gap-2">
+              <Link
+                href="/auth/signin"
+                className="text-xs text-zinc-400 hover:text-white px-3 py-1.5 transition-colors"
               >
                 Sign In
-              </motion.button>
-            </Link>
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="py-1.5 px-3.5 rounded-md text-xs font-medium bg-white text-black hover:bg-zinc-200 transition-colors"
+              >
+                Initialize Account
+              </Link>
+            </div>
           )}
         </div>
+      </div>
+    </header>
+  );
+}
 
-        <div className="md:hidden">
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+// =============================================================================
+// 2. Hero Section (Zero Gradients, High-Precision Typography)
+// =============================================================================
+function HeroSection({ user }: { user: UserProps }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyCmd = () => {
+    navigator.clipboard.writeText("git clone https://github.com/islamrakibul9274/social-sync.git");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <section className="text-center pt-8 sm:pt-14 space-y-6 max-w-4xl mx-auto">
+      {/* Release Notice Pill */}
+      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono border border-zinc-800 bg-zinc-900/70 text-zinc-300">
+        <span className="text-white font-semibold">ENGINEERING LOG</span>
+        <span className="text-zinc-600">•</span>
+        <span>Real-Time Pulse Protocol 2.6 Active</span>
+        <ChevronRight size={13} className="text-zinc-500" />
+      </div>
+
+      {/* Main Display Headline (Clean Solid White) */}
+      <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.08]">
+        The real-time social layer for modern engineers.
+      </h1>
+
+      {/* Concise Technical Subtitle */}
+      <p className="text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+        High-density pulse streams, direct peer dialogues, and creator telemetry.
+        Built with Next.js 16 Turbopack, NextAuth JWT security, and MongoDB clustering.
+      </p>
+
+      {/* Call to Actions & Terminal Copy */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+        <Link
+          href={user ? "/feed" : "/auth/signup"}
+          className="w-full sm:w-auto py-2.5 px-6 rounded-md text-xs font-semibold bg-white text-black hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+        >
+          <span>{user ? "Open Pulse Feed" : "Get Started Free"}</span>
+          <ArrowUpRight size={14} />
+        </Link>
+
+        {/* Quick Clone / Command Bar */}
+        <button
+          onClick={handleCopyCmd}
+          className="w-full sm:w-auto py-2 px-3.5 rounded-md text-xs font-mono text-zinc-300 border border-zinc-800 bg-zinc-950 hover:border-zinc-700 transition-colors flex items-center justify-center gap-2"
+        >
+          <span className="text-zinc-500">$</span>
+          <span>git clone social-sync</span>
+          {copied ? (
+            <Check size={13} className="text-emerald-400 ml-1" />
+          ) : (
+            <Copy size={13} className="text-zinc-500 ml-1" />
+          )}
+        </button>
+      </div>
+
+      {/* Benchmark Badges */}
+      <div className="pt-8 grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
+        <div className="linear-card p-3.5 rounded-lg">
+          <span className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider">
+            Pipeline
+          </span>
+          <p className="text-lg font-bold text-white mt-0.5">Turbopack</p>
+          <p className="text-[11px] text-zinc-400">Sub-500ms startup</p>
+        </div>
+        <div className="linear-card p-3.5 rounded-lg">
+          <span className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider">
+            Dialogue Engine
+          </span>
+          <p className="text-lg font-bold text-white mt-0.5">Direct 1-on-1</p>
+          <p className="text-[11px] text-zinc-400">Encrypted threads</p>
+        </div>
+        <div className="linear-card p-3.5 rounded-lg">
+          <span className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider">
+            Data Layer
+          </span>
+          <p className="text-lg font-bold text-white mt-0.5">Prisma 6.19</p>
+          <p className="text-[11px] text-zinc-400">Clustered MongoDB</p>
+        </div>
+        <div className="linear-card p-3.5 rounded-lg">
+          <span className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider">
+            Authentication
+          </span>
+          <p className="text-lg font-bold text-white mt-0.5">NextAuth v5</p>
+          <p className="text-[11px] text-zinc-400">JWT Strategy</p>
         </div>
       </div>
-      
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden px-4 pb-4 flex flex-col gap-4 overflow-hidden"
-          >
-            {navItems.map((item) => (
-              <a key={item} href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-300 block text-center">{item}</a>
-            ))}
-            
-            <div className="h-px w-full bg-white/10 my-2"></div>
-            
-            <Link href={user ? "/feed" : "/auth/signin"} className="w-full">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full bg-indigo-500/20 border border-indigo-500/50 text-white text-sm font-semibold py-2 px-4 rounded-full transition-all duration-300"
-              >
-                {user ? "Go to Feed" : "Sign In"}
-              </motion.button>
-            </Link>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
-  );
-};
-
-// ---------------------------------
-// 2. Hero Section
-// ---------------------------------
-const HeroSection = ({ user }: { user: UserProps }) => {
-  // 2. Added : Variants here
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
-  };
-  
-  // 3. Added : Variants here
-  const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
-  };
-  
-  return (
-    <motion.section
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="min-h-screen flex flex-col lg:flex-row items-center justify-center text-center lg:text-left pt-20 pb-16"
-    >
-      <div className="max-w-3xl lg:max-w-md xl:max-w-xl flex-shrink-0">
-        <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-4">
-          Connect in the <span className="text-indigo-400">Future</span>. Today.
-        </motion.h1>
-        <motion.p variants={itemVariants} className="text-lg md:text-xl text-gray-300 mb-8 max-w-xl mx-auto lg:mx-0">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-500 font-semibold">Social-Sync</span> is the next-generation platform for seamless, real-time social interaction across the digital universe.
-        </motion.p>
-        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-          
-          <Link href={user ? "/feed" : "/auth/signin"}>
-            <motion.button
-              whileHover={{ scale: 1.05, boxShadow: "0 0 25px 10px rgba(99, 102, 241, 0.6)" }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-indigo-500 text-white font-bold py-3 px-8 rounded-full shadow-lg glowing-cta-button transition-all duration-300"
-            >
-              {user ? "Enter Feed" : "Join Alpha"} <ChevronRight className="inline -mr-1" />
-            </motion.button>
-          </Link>
-
-          <motion.button
-            whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300"
-          >
-            Learn More
-          </motion.button>
-        </motion.div>
-      </div>
-      <motion.div variants={itemVariants} className="w-full lg:w-1/2 mt-12 lg:mt-0 flex items-center justify-center">
-        <FuturisticSVG />
-      </motion.div>
-    </motion.section>
-  );
-};
-
-
-// Features Grid
-const FeaturesGrid = () => {
-  const features = [
-    {
-      icon: <MessageSquare size={32} className="text-indigo-400" />,
-      title: "Real-time Feed",
-      description: "Experience a dynamic, instantly-updating feed that keeps you connected with zero latency.",
-    },
-    {
-      icon: <Heart size={32} className="text-rose-400" />,
-      title: "Emoji Reactions",
-      description: "Engage with content using a wide array of futuristic, animated emoji reactions. ❤️✨🚀",
-    },
-    {
-      icon: <Edit size={32} className="text-teal-400" />,
-      title: "Full CRUD",
-      description: "Enjoy complete control over your content with robust create, read, update, and delete capabilities.",
-    },
-  ];
-  
-  // 4. Added : Variants here
-  const containerVariants: Variants = { 
-    hidden: {}, 
-    visible: { transition: { staggerChildren: 0.3 } } 
-  };
-  
-  // 5. Added : Variants here
-  const cardVariants: Variants = {
-    hidden: { opacity: 0, y: 50, scale: 0.9 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: 'easeOut' } }
-  };
-  
-  return (
-    <section className="py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-12"
-      >
-        <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Core Features</h2>
-        <p className="text-lg text-gray-400 mt-2">Everything you need to redefine your social world.</p>
-      </motion.div>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-      >
-        {features.map((feature, index) => (
-          <motion.div
-            key={index}
-            variants={cardVariants}
-            whileHover={{ scale: 1.05, y: -10, boxShadow: "0 0 40px rgba(129, 140, 248, 0.4)", borderColor: "rgba(167, 139, 250, 0.6)" }}
-            className="bg-black/40 backdrop-blur-xl border border-white/20 rounded-2xl p-8 text-center flex flex-col items-center cursor-pointer"
-            style={{ perspective: '1000px' }}
-          >
-            <motion.div className="mb-6 bg-indigo-500/10 p-4 rounded-full glowing-border" style={{ transformStyle: 'preserve-3d' }}>
-              {feature.icon}
-            </motion.div>
-            <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
-            <p className="text-gray-400 leading-relaxed">{feature.description}</p>
-          </motion.div>
-        ))}
-      </motion.div>
     </section>
   );
-};
+}
 
-// Inline SVG Graphic
-const FuturisticSVG = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
-      className="w-full max-w-lg h-auto"
-    >
-      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-        <defs>
-          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{ stopColor: 'rgba(129, 140, 248, 1)', stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: 'rgba(167, 139, 250, 1)', stopOpacity: 1 }} />
-          </linearGradient>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="5" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-        <motion.g filter="url(#glow)" animate={{ rotate: 360 }} transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}>
-          <motion.path
-            d="M 200, 50 C 282.8, 50, 350, 117.2, 350, 200 C 350, 282.8, 282.8, 350, 200, 350 C 117.2, 350, 50, 282.8, 50, 200 C 50, 117.2, 117.2, 50, 200, 50 Z"
-            fill="none" stroke="url(#grad1)" strokeWidth="3"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.5 }}
-            transition={{ duration: 3, ease: "easeInOut" }}
-          />
-          <motion.path
-            d="M 100, 100 L 300, 300 M 100, 300 L 300, 100"
-            fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 2, delay: 1, ease: "easeInOut" }}
-          />
-          <motion.circle cx="200" cy="200" r="120" stroke="rgba(167, 139, 250, 0.3)" strokeWidth="1" fill="none"
-            initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ duration: 1.5, delay: 0.8, type: 'spring' }}
-          />
-          <motion.circle cx="200" cy="200" r="80" stroke="rgba(129, 140, 248, 0.5)" strokeWidth="1.5" fill="none"
-            initial={{ scale: 0, rotate: 90 }} animate={{ scale: 1, rotate: -90 }} transition={{ duration: 1.5, delay: 1, type: 'spring' }}
-          />
-        </motion.g>
-      </svg>
-    </motion.div>
+// =============================================================================
+// 3. Interactive Technical Terminal & Pulse Simulator
+// =============================================================================
+function InteractiveSystemTerminal({ user }: { user: UserProps }) {
+  const [activeTab, setActiveTab] = useState<"stream" | "chat" | "telemetry">(
+    "stream"
   );
-};
+  const [reactions, setReactions] = useState({ HEART: 12, ZAP: 19, FIRE: 28 });
+  const [activeReactions, setActiveReactions] = useState<Record<string, boolean>>({
+    ZAP: true,
+  });
+  const [mockMessages, setMockMessages] = useState([
+    { sender: "Elena (Core Dev)", text: "Deployed the updated schema indexes. Pings are under 12ms.", time: "16:42" },
+    { sender: "You", text: "Verified! The feed rendering feels instantaneous.", time: "16:43" },
+  ]);
+  const [chatInput, setChatInput] = useState("");
 
-// Footer
-const Footer = () => {
+  const handleToggleReaction = (type: "HEART" | "ZAP" | "FIRE") => {
+    setActiveReactions((prev) => {
+      const active = !!prev[type];
+      setReactions((r) => ({ ...r, [type]: r[type] + (active ? -1 : 1) }));
+      return { ...prev, [type]: !active };
+    });
+  };
+
+  const handleSendMockMsg = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    setMockMessages((prev) => [
+      ...prev,
+      {
+        sender: "You",
+        text: chatInput.trim(),
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      },
+    ]);
+    setChatInput("");
+  };
+
   return (
-    <footer className="text-center py-8 border-t border-white/10 mt-16">
-      <p className="text-gray-500">&copy; {new Date().getFullYear()} Social-Sync. All rights reserved.</p>
+    <section id="terminal" className="space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-zinc-800 pb-3">
+        <div>
+          <span className="text-[10px] font-mono uppercase text-zinc-400 tracking-wider">
+            Interactive Testbed
+          </span>
+          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+            Live Component Sandbox
+          </h2>
+        </div>
+        {/* Segmented Switcher */}
+        <div className="flex items-center gap-1 p-1 bg-zinc-900 border border-zinc-800 rounded-lg">
+          {(["stream", "chat", "telemetry"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-3 py-1 rounded text-xs font-mono transition-colors ${
+                activeTab === tab
+                  ? "bg-zinc-800 text-white font-semibold"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              {tab === "stream" ? "Pulse Stream" : tab === "chat" ? "Direct Chat" : "Telemetry"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Terminal Window Box */}
+      <div className="linear-panel rounded-xl overflow-hidden shadow-2xl border border-zinc-800">
+        {/* Top Window Bar */}
+        <div className="h-9 px-4 border-b border-zinc-800/80 bg-zinc-950 flex items-center justify-between text-xs font-mono text-zinc-500">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+            <span className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+            <span className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
+            <span className="text-zinc-400 ml-2">socialsync-engine // sandbox.io</span>
+          </div>
+          <div className="flex items-center gap-2 text-[10px]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span>SOCKET: OK</span>
+          </div>
+        </div>
+
+        {/* Tab 1: Pulse Stream Interactive */}
+        {activeTab === "stream" && (
+          <div className="p-6 space-y-4 bg-[#09090b]">
+            <div className="linear-card p-4 rounded-lg space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded bg-zinc-800 text-zinc-300 font-mono text-xs flex items-center justify-center font-bold">
+                    R
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-white">Rakib Islam</span>
+                    <span className="text-[10px] text-zinc-500 font-mono ml-2">@rakib • 3m ago</span>
+                  </div>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+                  #system
+                </span>
+              </div>
+
+              <p className="text-xs sm:text-sm text-zinc-200 leading-relaxed font-sans">
+                Engineered the pulse feed layout using tactile 1px borders and high-density typography.
+                Zero cheesy gradients. Zero unnecessary bloat. Just pure speed.
+              </p>
+
+              {/* Reaction triggers */}
+              <div className="flex items-center gap-2 pt-2 border-t border-zinc-800/80">
+                <button
+                  onClick={() => handleToggleReaction("HEART")}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono transition-colors ${
+                    activeReactions.HEART
+                      ? "bg-zinc-800 text-white border border-zinc-700"
+                      : "bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800"
+                  }`}
+                >
+                  <Heart size={12} className={activeReactions.HEART ? "fill-white" : ""} />
+                  <span>{reactions.HEART}</span>
+                </button>
+
+                <button
+                  onClick={() => handleToggleReaction("ZAP")}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono transition-colors ${
+                    activeReactions.ZAP
+                      ? "bg-zinc-800 text-white border border-zinc-700"
+                      : "bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800"
+                  }`}
+                >
+                  <Zap size={12} className={activeReactions.ZAP ? "fill-white" : ""} />
+                  <span>{reactions.ZAP}</span>
+                </button>
+
+                <button
+                  onClick={() => handleToggleReaction("FIRE")}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono transition-colors ${
+                    activeReactions.FIRE
+                      ? "bg-zinc-800 text-white border border-zinc-700"
+                      : "bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800"
+                  }`}
+                >
+                  <Flame size={12} className={activeReactions.FIRE ? "fill-white" : ""} />
+                  <span>{reactions.FIRE}</span>
+                </button>
+
+                <span className="text-[10px] font-mono text-zinc-500 ml-auto">
+                  Click to test optimistic updates
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 2: Direct Chat Interactive */}
+        {activeTab === "chat" && (
+          <div className="p-6 space-y-4 bg-[#09090b]">
+            <div className="space-y-3 min-h-[140px]">
+              {mockMessages.map((msg, i) => (
+                <div key={i} className={`flex flex-col ${msg.sender === "You" ? "items-end" : "items-start"}`}>
+                  <span className="text-[10px] font-mono text-zinc-500 mb-0.5">
+                    {msg.sender} • {msg.time}
+                  </span>
+                  <div
+                    className={`max-w-md rounded-lg p-2.5 text-xs ${
+                      msg.sender === "You"
+                        ? "bg-white text-black font-medium"
+                        : "bg-zinc-900 border border-zinc-800 text-zinc-200"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <form onSubmit={handleSendMockMsg} className="flex gap-2 pt-2 border-t border-zinc-800">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder="Type a simulated message..."
+                className="flex-1 linear-input rounded-md px-3 py-1.5 text-xs text-white"
+              />
+              <button
+                type="submit"
+                className="py-1.5 px-4 rounded-md text-xs font-semibold bg-white text-black hover:bg-zinc-200"
+              >
+                Send
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Tab 3: Telemetry Stream */}
+        {activeTab === "telemetry" && (
+          <div className="p-6 bg-[#09090b] font-mono text-xs text-zinc-400 space-y-2">
+            <p className="text-zinc-500">// Real-time cluster metrics dump</p>
+            <p className="text-emerald-400">✓ Database Connection: cluster0.obdwazm.mongodb.net [ESTABLISHED]</p>
+            <p className="text-zinc-300">&gt; NextAuth JWT Strategy: Active (sub: 69ca8326...)</p>
+            <p className="text-zinc-300">&gt; Active Indices: Bookmark_userId_postId, Follow_followerId_followingId</p>
+            <p className="text-zinc-300">&gt; Edge Response Time: 14.2ms</p>
+            <p className="text-zinc-500">// Protocol state: idle</p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// =============================================================================
+// 4. Bento Grid (Engineered 1px Precision, High Density)
+// =============================================================================
+function BentoGridTechnical() {
+  return (
+    <section id="features" className="space-y-6">
+      <div className="border-b border-zinc-800 pb-3">
+        <span className="text-[10px] font-mono uppercase text-zinc-400 tracking-wider">
+          Architecture
+        </span>
+        <h2 className="text-2xl font-bold text-white tracking-tight">
+          Engineered for precision and clarity.
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Card 1: Pulse Stream (Span 2) */}
+        <div className="md:col-span-2 linear-card p-6 rounded-xl space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono text-zinc-400">01 // STREAM ENGINE</span>
+            <span className="text-[10px] font-mono text-zinc-500">REALTIME</span>
+          </div>
+          <h3 className="text-xl font-bold text-white tracking-tight">
+            High-Density Pulse Broadcast
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">
+            Stream thoughts, markdown snippets, and full-resolution media attachments.
+            Filter dynamically by hashtag indexing or author subscriptions with instant client caches.
+          </p>
+          <div className="flex flex-wrap gap-2 pt-2">
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+              #MediaCDN
+            </span>
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+              #HashtagIndices
+            </span>
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-300">
+              #OptimisticDispatch
+            </span>
+          </div>
+        </div>
+
+        {/* Card 2: Direct Dialogues (Span 1) */}
+        <div className="linear-card p-6 rounded-xl space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono text-zinc-400">02 // DIALOGUE</span>
+            <span className="text-[10px] font-mono text-emerald-400">P2P STYLE</span>
+          </div>
+          <h3 className="text-xl font-bold text-white tracking-tight">
+            Direct Peer Chat
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+            Dedicated `/messages` hub for 1-on-1 private threads. Unread status badges,
+            image transfers, and instant member directory search.
+          </p>
+          <div className="pt-2">
+            <span className="text-[11px] font-mono text-zinc-300">
+              3s Active Polling Sync
+            </span>
+          </div>
+        </div>
+
+        {/* Card 3: Creator Telemetry (Span 1) */}
+        <div className="linear-card p-6 rounded-xl space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono text-zinc-400">03 // TELEMETRY</span>
+            <span className="text-[10px] font-mono text-zinc-500">ANALYTICS</span>
+          </div>
+          <h3 className="text-xl font-bold text-white tracking-tight">
+            Creator Intelligence Hub
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+            Command center visualizing 7-day velocity cadences, reaction distributions,
+            and content lifecycle management.
+          </p>
+          <div className="pt-2">
+            <span className="text-[11px] font-mono text-zinc-300">
+              /dashboard Integration
+            </span>
+          </div>
+        </div>
+
+        {/* Card 4: Security & Clusters (Span 2) */}
+        <div className="md:col-span-2 linear-card p-6 rounded-xl space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono text-zinc-400">04 // INFRASTRUCTURE</span>
+            <span className="text-[10px] font-mono text-zinc-500">ENCRYPTED</span>
+          </div>
+          <h3 className="text-xl font-bold text-white tracking-tight">
+            Distributed MongoDB & Cryptographic JWTs
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">
+            Robust data persistence with Prisma Client 6.19 and NextAuth v5 session tokens.
+            Edge-ready middleware proxying with zero extraneous overhead.
+          </p>
+          <div className="flex items-center gap-4 text-xs font-mono text-zinc-300 pt-1">
+            <span>• Bcrypt Password Hashing</span>
+            <span>• Indexed Queries</span>
+            <span>• Zero Tracking</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// =============================================================================
+// 5. Technical Comparison Matrix
+// =============================================================================
+function ComparisonMatrix() {
+  const rows = [
+    { feature: "UI Paradigm", legacy: "Flashy purple neon gradients", socialsync: "Engineered 1px precision monochrome" },
+    { feature: "Direct Messaging", legacy: "None / static comments", socialsync: "Full /messages hub with image attachments" },
+    { feature: "Creator Dashboard", legacy: "Barebones profile", socialsync: "7-day activity cadence & telemetry metrics" },
+    { feature: "Content Controls", legacy: "Basic text only", socialsync: "Image attachments, hashtags, bookmarks, deletion" },
+    { feature: "Framework", legacy: "Legacy Webpack", socialsync: "Next.js 16 Turbopack & React 19" },
+  ];
+
+  return (
+    <section id="matrix" className="space-y-4">
+      <div className="border-b border-zinc-800 pb-3">
+        <span className="text-[10px] font-mono uppercase text-zinc-400 tracking-wider">
+          System Comparison
+        </span>
+        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          How SocialSync v2.6 compares.
+        </h2>
+      </div>
+
+      <div className="linear-panel rounded-xl overflow-hidden border border-zinc-800">
+        <table className="w-full text-left text-xs">
+          <thead>
+            <tr className="border-b border-zinc-800 bg-zinc-950 font-mono text-[11px] text-zinc-400">
+              <th className="p-3.5 pl-5">Capability</th>
+              <th className="p-3.5 text-zinc-500">Legacy Architecture</th>
+              <th className="p-3.5 pr-5 text-white">SocialSync 2026</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-zinc-800/80">
+            {rows.map((row, i) => (
+              <tr key={i} className="hover:bg-zinc-900/40 transition-colors">
+                <td className="p-3.5 pl-5 font-medium text-white">{row.feature}</td>
+                <td className="p-3.5 text-zinc-500">{row.legacy}</td>
+                <td className="p-3.5 pr-5 font-mono text-zinc-200 flex items-center gap-1.5">
+                  <Check size={13} className="text-emerald-400" />
+                  <span>{row.socialsync}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+// =============================================================================
+// 6. Action Banner
+// =============================================================================
+function ActionBanner({ user }: { user: UserProps }) {
+  return (
+    <section className="linear-card p-8 sm:p-12 rounded-xl text-center space-y-4 border border-zinc-800">
+      <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+        Ready to broadcast on the new network?
+      </h2>
+      <p className="text-xs sm:text-sm text-zinc-400 max-w-lg mx-auto">
+        Create an account in seconds or enter the feed stream to experience the real-time social layer.
+      </p>
+      <div className="pt-2">
+        <Link
+          href={user ? "/feed" : "/auth/signup"}
+          className="inline-flex items-center gap-2 py-2.5 px-6 rounded-md text-xs font-semibold bg-white text-black hover:bg-zinc-200 transition-colors"
+        >
+          <span>{user ? "Open Feed Stream" : "Initialize Account"}</span>
+          <ArrowUpRight size={14} />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+// =============================================================================
+// 7. Engineered Footer
+// =============================================================================
+function EngineeredFooter() {
+  return (
+    <footer className="border-t border-zinc-800/80 py-10 text-xs text-zinc-500 bg-[#050507]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 rounded bg-zinc-800 text-zinc-300 text-[10px] font-bold flex items-center justify-center">
+            S
+          </div>
+          <span className="text-zinc-400 font-medium">SocialSync Protocol</span>
+          <span className="font-mono text-[10px]">&copy; {new Date().getFullYear()}</span>
+        </div>
+
+        <div className="flex items-center gap-6 font-mono text-[11px]">
+          <Link href="/feed" className="hover:text-zinc-300 transition-colors">
+            Stream
+          </Link>
+          <Link href="/dashboard" className="hover:text-zinc-300 transition-colors">
+            Dashboard
+          </Link>
+          <Link href="/messages" className="hover:text-zinc-300 transition-colors">
+            Messages
+          </Link>
+          <a
+            href="https://github.com/islamrakibul9274/social-sync"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-zinc-300 transition-colors"
+          >
+            GitHub
+          </a>
+        </div>
+      </div>
     </footer>
   );
 }

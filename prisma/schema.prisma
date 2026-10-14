@@ -16,7 +16,12 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  coverImage    String?
+  headline      String?
   bio           String?
+  website       String?
+  github        String?
+  twitter       String?
   password      String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -26,18 +31,32 @@ model User {
   posts         Post[]
   comments      Comment[]
   reactions     Reaction[]
+  bookmarks     Bookmark[]
+  
+  // Follows
+  followers     Follow[]  @relation("UserFollowers")
+  following     Follow[]  @relation("UserFollowing")
+
+  // Chat
+  conversationIds String[]       @db.ObjectId
+  conversations   Conversation[] @relation(fields: [conversationIds], references: [id])
+  sentMessages    Message[]      @relation("SentMessages")
 }
 
 model Post {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   content   String
+  image     String?
+  tag       String?
   createdAt DateTime   @default(now())
+  updatedAt DateTime?  @updatedAt
   
   authorId  String     @db.ObjectId
   author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
   
   comments  Comment[]
   reactions Reaction[]
+  bookmarks Bookmark[]
 }
 
 model Comment {
@@ -71,6 +90,53 @@ model Reaction {
   authorId  String       @db.ObjectId
 
   @@unique([postId, authorId, type])
+}
+
+model Bookmark {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String   @db.ObjectId
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
+}
+
+model Follow {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  followerId  String   @db.ObjectId
+  follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String   @db.ObjectId
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Conversation {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  lastMessageAt  DateTime  @default(now())
+  
+  participantIds String[]  @db.ObjectId
+  participants   User[]    @relation(fields: [participantIds], references: [id])
+  messages       Message[]
+}
+
+model Message {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  content        String
+  image          String?
+  createdAt      DateTime     @default(now())
+  read           Boolean      @default(false)
+
+  conversationId String       @db.ObjectId
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  senderId       String       @db.ObjectId
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 }
 
 // NextAuth.js specific models
